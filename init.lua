@@ -1,18 +1,36 @@
-
+--[[lit-meta
+	name = "alphafantomu/orcus-getter"
+	version = "0.0.3"
+	description = "a orcus extension for getter attributes in classes"
+	tags = {"oop", "lua", "luvit", "extension"}
+	license = "MIT"
+	author = {name = "Ari Kumikaeru"}
+	homepage = "https://github.com/alphafantomu/orcus-getter"
+	dependencies = {'alphafantomu/orcus'}
+	files = {"**.lua"}
+]]
 local require, type, assert = require, type, assert;
 
-local getter = require('orcus')('getter', nil, function(self, method)
+local getter = require('orcus')('getter', {
+	cache = true;
+});
+
+getter.init = function(self, method, cache)
+	if (cache == nil) then
+		cache = self.cache;
+	end;
+	self.cache = cache;
 	if (method) then
 		self:setMethod(method);
 	end;
-end);
+end;
 
 getter.call = function(self, instance)
 	local method = self.method;
-	if not (type(method) == 'function') then
+	if (not type(method) == 'function') then
 		self.method, method = nil, nil;
 	end;
-	assert(method, 'getter method not set')(instance);
+	return assert(method, 'getter method not set')(instance);
 end;
 
 getter.setMethod = function(self, method)
